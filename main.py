@@ -3,7 +3,7 @@ import moderngl as mgl
 import pygame as pg
 import sys
 from shader import Shader
-from scene import Scene
+from game import Game
 from player import Player
 from textures import Textures
 
@@ -38,7 +38,7 @@ class PyMC:
         self.textures = Textures(self)
         self.player = Player(self)
         self.shader_program = Shader(self)
-        self.scene = Scene(self)
+        self.scene = Game(self)
 
     def update(self):
         self.player.update()

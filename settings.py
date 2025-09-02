@@ -53,15 +53,6 @@ MOUSE_SENSITIVITY = 0.002
 # colors
 BG_COLOR = glm.vec3(0.58, 0.83, 0.99)
 
-# textures
-SAND = 1
-GRASS = 2
-DIRT = 3
-STONE = 4
-SNOW = 5
-LEAVES = 6
-WOOD = 7
-
 # terrain levels
 SNOW_LVL = 54
 STONE_LVL = 49

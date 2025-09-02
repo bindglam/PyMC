@@ -6,7 +6,7 @@ from world_objects.water import Water
 from world_objects.clouds import Clouds
 
 
-class Scene:
+class Game:
     def __init__(self, app):
         self.app = app
         self.world = World(self.app)

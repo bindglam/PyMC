@@ -1,6 +1,6 @@
 from settings import *
 from meshes.chunk_mesh_builder import get_chunk_index
-
+from world_objects.blocks import Blocks
 
 class VoxelHandler:
     def __init__(self, world):
@@ -16,7 +16,7 @@ class VoxelHandler:
         self.voxel_normal = None
 
         self.interaction_mode = 0  # 0: remove voxel   1: add voxel
-        self.new_voxel_id = DIRT
+        self.new_voxel_id = Blocks.DIRT.value
 
     def add_voxel(self):
         if self.voxel_id:

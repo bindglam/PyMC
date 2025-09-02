@@ -1,6 +1,7 @@
 from noise import noise2, noise3
 from random import random
 from settings import *
+from world_objects.blocks import *
 
 
 @njit
@@ -39,46 +40,45 @@ def get_index(x, y, z):
 
 @njit
 def set_voxel_id(voxels, x, y, z, wx, wy, wz, world_height):
-    voxel_id = 0
+    voxel = Blocks.AIR
 
     if wy < world_height - 1:
         # create caves
         if (noise3(wx * 0.09, wy * 0.09, wz * 0.09) > 0 and
                 noise2(wx * 0.1, wz * 0.1) * 3 + 3 < wy < world_height - 10):
-            voxel_id = 0
-
+            voxel = Blocks.AIR
         else:
-            voxel_id = STONE
+            voxel = Blocks.STONE
     else:
         rng = int(7 * random())
         ry = wy - rng
         if SNOW_LVL <= ry < world_height:
-            voxel_id = SNOW
+            voxel = Blocks.SNOW
 
         elif STONE_LVL <= ry < SNOW_LVL:
-            voxel_id = STONE
+            voxel = Blocks.STONE
 
         elif DIRT_LVL <= ry < STONE_LVL:
-            voxel_id = DIRT
+            voxel = Blocks.DIRT
 
         elif GRASS_LVL <= ry < DIRT_LVL:
-            voxel_id = GRASS
+            voxel = Blocks.GRASS
 
         else:
-            voxel_id = SAND
+            voxel = Blocks.SAND
 
     # setting ID
-    voxels[get_index(x, y, z)] = voxel_id
+    voxels[get_index(x, y, z)] = voxel.value
 
     # place tree
     if wy < DIRT_LVL:
-        place_tree(voxels, x, y, z, voxel_id)
+        place_tree(voxels, x, y, z, voxel)
 
 
 @njit
-def place_tree(voxels, x, y, z, voxel_id):
+def place_tree(voxels, x, y, z, voxel):
     rnd = random()
-    if voxel_id != GRASS or rnd > TREE_PROBABILITY:
+    if voxel != Blocks.GRASS or rnd > TREE_PROBABILITY:
         return None
     if y + TREE_HEIGHT >= CHUNK_SIZE:
         return None
@@ -88,7 +88,7 @@ def place_tree(voxels, x, y, z, voxel_id):
         return None
 
     # dirt under the tree
-    voxels[get_index(x, y, z)] = DIRT
+    voxels[get_index(x, y, z)] = Blocks.DIRT.value
 
     # leaves
     m = 0
@@ -98,12 +98,12 @@ def place_tree(voxels, x, y, z, voxel_id):
         for ix in range(-TREE_H_WIDTH + m, TREE_H_WIDTH - m * rng):
             for iz in range(-TREE_H_WIDTH + m * rng, TREE_H_WIDTH - m):
                 if (ix + iz) % 4:
-                    voxels[get_index(x + ix + k, y + iy, z + iz + k)] = LEAVES
+                    voxels[get_index(x + ix + k, y + iy, z + iz + k)] = Blocks.LEAVES.value
         m += 1 if n > 0 else 3 if n > 1 else 0
 
     # tree trunk
     for iy in range(1, TREE_HEIGHT - 2):
-        voxels[get_index(x, y + iy, z)] = WOOD
+        voxels[get_index(x, y + iy, z)] = Blocks.WOOD.value
 
     # top
-    voxels[get_index(x, y + TREE_HEIGHT - 2, z)] = LEAVES
+    voxels[get_index(x, y + TREE_HEIGHT - 2, z)] = Blocks.LEAVES.value
