@@ -2,6 +2,8 @@ from settings import *
 from world_objects.chunk import Chunk
 from voxel_handler import VoxelHandler
 
+import threading
+
 
 class World:
     def __init__(self, app):
@@ -19,16 +21,19 @@ class World:
         for x in range(WORLD_W):
             for y in range(WORLD_H):
                 for z in range(WORLD_D):
-                    chunk = Chunk(self, position=(x, y, z))
+                    self.build_chunk(x, y, z)
 
-                    chunk_index = x + WORLD_W * z + WORLD_AREA * y
-                    self.chunks[chunk_index] = chunk
+    def build_chunk(self, x, y, z):
+        chunk = Chunk(self, position=(x, y, z))
 
-                    # put the chunk voxels in a separate array
-                    self.voxels[chunk_index] = chunk.build_voxels()
+        chunk_index = x + WORLD_W * z + WORLD_AREA * y
+        self.chunks[chunk_index] = chunk
 
-                    # get pointer to voxels
-                    chunk.voxels = self.voxels[chunk_index]
+        # put the chunk voxels in a separate array
+        self.voxels[chunk_index] = chunk.build_voxels()
+
+        # get pointer to voxels
+        chunk.voxels = self.voxels[chunk_index]
 
     def build_chunk_mesh(self):
         for chunk in self.chunks:
